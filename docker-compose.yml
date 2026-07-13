@@ -1,0 +1,16 @@
+services:
+  format-prettify-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - FMT_CORS_ORIGINS=${FMT_CORS_ORIGINS:-*}
+      - FMT_RATE_LIMIT=${FMT_RATE_LIMIT:-60/minute}
+      - FMT_MAX_INPUT_MB=${FMT_MAX_INPUT_MB:-5}
+      - FMT_ENVIRONMENT=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
