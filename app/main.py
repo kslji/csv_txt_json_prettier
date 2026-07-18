@@ -10,6 +10,7 @@ from slowapi.errors import RateLimitExceeded
 
 from app.api.routes import limiter, router
 from app.config import settings
+from app.middleware.gateway_auth import GatewayAuthMiddleware
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,6 +30,8 @@ app = FastAPI(
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+app.add_middleware(GatewayAuthMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
