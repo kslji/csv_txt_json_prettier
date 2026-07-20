@@ -57,6 +57,11 @@ async def format_json_endpoint(
         raise HTTPException(status_code=400, detail={"error": exc.message, "code": exc.code}) from exc
 
     result = json_formatter.format_json(text, indent=indent, sort_keys=sort_keys, minify=minify)
+    if not result.is_valid:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": f"Invalid JSON data: {result.error}", "code": "invalid_json"}
+        )
 
     return FormatResponse(
         detected_format="json",
@@ -96,6 +101,11 @@ async def format_csv_endpoint(
     result = csv_formatter.format_csv(
         text, output_style=output_style, delimiter_override=delimiter, has_header=has_header
     )
+    if not result.is_valid:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": f"Invalid CSV data: {result.error}", "code": "invalid_csv"}
+        )
 
     return FormatResponse(
         detected_format="csv",
@@ -166,6 +176,11 @@ async def format_auto_endpoint(
 
     if detected == "json":
         result = json_formatter.format_json(text)
+        if not result.is_valid:
+            raise HTTPException(
+                status_code=400,
+                detail={"error": f"Invalid JSON data: {result.error}", "code": "invalid_json"}
+            )
         return FormatResponse(
             detected_format="json",
             is_valid=result.is_valid,
@@ -176,6 +191,11 @@ async def format_auto_endpoint(
         )
     if detected == "csv":
         result = csv_formatter.format_csv(text)
+        if not result.is_valid:
+            raise HTTPException(
+                status_code=400,
+                detail={"error": f"Invalid CSV data: {result.error}", "code": "invalid_csv"}
+            )
         return FormatResponse(
             detected_format="csv",
             is_valid=result.is_valid,
@@ -245,6 +265,11 @@ async def format_unified_endpoint(
 
     if fmt == "json":
         result = json_formatter.format_json(text, indent=indent, sort_keys=sort_keys, minify=minify)
+        if not result.is_valid:
+            raise HTTPException(
+                status_code=400,
+                detail={"error": f"Invalid JSON data: {result.error}", "code": "invalid_json"}
+            )
         return FormatResponse(
             detected_format="json",
             is_valid=result.is_valid,
@@ -265,6 +290,11 @@ async def format_unified_endpoint(
         result = csv_formatter.format_csv(
             text, output_style=output_style, delimiter_override=delimiter, has_header=has_header
         )
+        if not result.is_valid:
+            raise HTTPException(
+                status_code=400,
+                detail={"error": f"Invalid CSV data: {result.error}", "code": "invalid_csv"}
+            )
         return FormatResponse(
             detected_format="csv",
             is_valid=result.is_valid,
