@@ -80,3 +80,9 @@ def root():
             "/api/v1/format/auto",
         ],
     }
+
+
+@app.get("/health", tags=["system"])
+def health():
+    return {"status": "ok"}
+
